@@ -38,15 +38,15 @@ Return ONLY valid JSON array, no markdown fences, no explanation. Prioritize rec
 export async function fetchBrief(): Promise<Brief> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const response = await client.messages.create({
+  const response = await (client.messages.create as any)({
     model: "claude-sonnet-4-20250514",
     max_tokens: 2000,
-    tools: [{ type: "web_search_20250305" as any, name: "web_search" }],
+    tools: [{ type: "web_search_20250305", name: "web_search" }],
     messages: [{ role: "user", content: PROMPT }],
   });
 
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") throw new Error("No text response from Claude");
+  const textBlock = response.content.find((b: any) => b.type === "text");
+  if (!textBlock) throw new Error("No text response from Claude");
 
   let raw = textBlock.text.trim();
   raw = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
