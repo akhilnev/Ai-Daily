@@ -1,0 +1,14 @@
+name: Daily AI Brief Email
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+jobs:
+  send-brief:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send daily brief email
+        run: |
+          curl -X POST "${{ secrets.APP_URL }}/api/send-email" \
+            -H "Content-Type: application/json" \
+            --fail --silent --show-error
