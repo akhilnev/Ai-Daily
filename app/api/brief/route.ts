@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { fetchBrief } from "@/lib/brief";
 
-export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 export async function GET() {
   try {

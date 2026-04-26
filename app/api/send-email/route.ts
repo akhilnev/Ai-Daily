@@ -3,7 +3,8 @@ import { Resend } from "resend";
 import { fetchBrief } from "@/lib/brief";
 import { buildEmailHtml } from "@/lib/email-template";
 
-export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
