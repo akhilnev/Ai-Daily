@@ -6,6 +6,9 @@ export interface BriefItem {
   title: string;
   category: Category;
   summary: string;
+  keyPoints: string[];
+  links: { label: string; url: string }[];
+  fdeApplications: string[];
   relevance: string;
   source: string;
   imageQuery: string;
@@ -23,15 +26,27 @@ const PROMPT = `Today is ${new Date().toDateString()}. You are an AI research as
 - tools: new developer tools, inference infra, Hugging Face releases, LangChain, frameworks
 - industry: funding, acquisitions, policy, significant company moves
 
-Return exactly 6-8 items as a JSON array. Each object:
+Return exactly 6-8 items as a JSON array. For each item, go DEEP — provide substantive technical detail, not just surface-level news. Each object:
 {
   "title": "concise headline max 10 words",
   "category": "model" | "research" | "tools" | "industry",
-  "summary": "2-3 sentences explaining what happened in plain language, no jargon",
-  "relevance": "1-2 sentences on relevance for a Palantir FDE who builds enterprise AI/data platforms with Foundry, stays current with ML research, and cares about how new models and APIs affect real-world deployments",
+  "summary": "2-3 sentences explaining what happened in plain language",
+  "keyPoints": [
+    "8-10 specific, detailed bullet points covering: technical specs, benchmark numbers, architecture changes, pricing, availability, key limitations, comparisons to prior work, notable reactions from the community, and any caveats or controversies. Each point should be a complete sentence with specific cited facts (e.g. 'Scores 92.3% on MMLU, up from 87.1% in the previous version — source: official blog post'). Do NOT be vague — include numbers, dates, names, and specifics."
+  ],
+  "links": [
+    { "label": "descriptive label e.g. Official Announcement", "url": "actual URL to the source" },
+    { "label": "another resource", "url": "URL" }
+  ],
+  "fdeApplications": [
+    "2-3 specific, actionable ways this development applies to a Palantir Forward Deployed Engineer's work — mention concrete Foundry/AIP workflows, Ontology patterns, Pipeline Builder integrations, customer deployment scenarios, or how this changes the way you'd architect a solution for a government/enterprise client. Be specific, not generic."
+  ],
+  "relevance": "1-2 sentence high-level relevance summary for an FDE",
   "source": "source name e.g. Anthropic blog, arXiv, TechCrunch",
   "imageQuery": "3-4 word image search query"
 }
+
+Provide 2-3 real, working URLs per item in the links array (official blog posts, paper links, GitHub repos, etc.). For keyPoints, aim for exactly 8-10 points that would give someone a thorough understanding without needing to read the original source.
 
 Return ONLY valid JSON array, no markdown fences, no explanation. Prioritize recency — last 48 hours only.`;
 
@@ -40,7 +55,7 @@ export async function fetchBrief(): Promise<Brief> {
 
   const response = await (client.messages.create as any)({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 2000,
+    max_tokens: 16000,
     tools: [{ type: "web_search_20250305", name: "web_search" }],
     messages: [{ role: "user", content: PROMPT }],
   });

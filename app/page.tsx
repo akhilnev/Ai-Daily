@@ -9,6 +9,9 @@ interface BriefItem {
   title: string;
   category: Category;
   summary: string;
+  keyPoints: string[];
+  links: { label: string; url: string }[];
+  fdeApplications: string[];
   relevance: string;
   source: string;
   imageQuery: string;
@@ -53,16 +56,55 @@ function Card({ item }: { item: BriefItem }) {
         <Badge cat={item.category} />
       </div>
       <p style={{ fontSize: 14, color: "#4b5563", lineHeight: 1.7, margin: "0 0 10px" }}>{item.summary}</p>
-      <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 10 }}>
-        <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6, margin: 0 }}>
-          <span style={{ fontWeight: 600, color: "#374151" }}>Why it matters — </span>
-          {expanded ? item.relevance : item.relevance.slice(0, 120) + (item.relevance.length > 120 ? "..." : "")}
-          {item.relevance.length > 120 && (
-            <button onClick={() => setExpanded(!expanded)} style={{
-              background: "none", border: "none", color: "#6b7280", cursor: "pointer",
-              fontSize: 12, marginLeft: 4, textDecoration: "underline",
-            }}>{expanded ? "less" : "more"}</button>
+
+      <button onClick={() => setExpanded(!expanded)} style={{
+        background: "none", border: "1px solid #e5e7eb", borderRadius: 8, cursor: "pointer",
+        fontSize: 12, color: "#4b5563", padding: "5px 12px", marginBottom: expanded ? 12 : 0,
+      }}>{expanded ? "Hide details ▴" : "Show details ▾"}</button>
+
+      {expanded && (
+        <div style={{ marginTop: 8 }}>
+          {item.keyPoints?.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: "#374151", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Key Points</p>
+              <ul style={{ margin: 0, paddingLeft: 18, listStyleType: "disc" }}>
+                {item.keyPoints.map((pt, i) => (
+                  <li key={i} style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, marginBottom: 4 }}>{pt}</li>
+                ))}
+              </ul>
+            </div>
           )}
+
+          {item.fdeApplications?.length > 0 && (
+            <div style={{ marginBottom: 14, background: "#eff6ff", borderRadius: 8, padding: "12px 16px", border: "1px solid #dbeafe" }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: "#1e40af", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.05em" }}>FDE Applications</p>
+              <ul style={{ margin: 0, paddingLeft: 18, listStyleType: "disc" }}>
+                {item.fdeApplications.map((app, i) => (
+                  <li key={i} style={{ fontSize: 13, color: "#1e3a5f", lineHeight: 1.7, marginBottom: 4 }}>{app}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {item.links?.length > 0 && (
+            <div style={{ marginBottom: 10 }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: "#374151", margin: "0 0 6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Learn More</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {item.links.map((link, i) => (
+                  <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" style={{
+                    fontSize: 12, color: "#2563eb", textDecoration: "none", padding: "4px 10px",
+                    border: "1px solid #dbeafe", borderRadius: 6, background: "#f0f7ff",
+                  }}>{link.label} ↗</a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 10, marginTop: expanded ? 0 : 10 }}>
+        <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6, margin: 0 }}>
+          <span style={{ fontWeight: 600, color: "#374151" }}>Why it matters — </span>{item.relevance}
         </p>
       </div>
       <p style={{ fontSize: 11, color: "#9ca3af", margin: "8px 0 0" }}>{item.source}</p>

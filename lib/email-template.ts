@@ -22,6 +22,21 @@ function itemCard(item: BriefItem): string {
           </tr>
         </table>
         <p style="font-size:14px;color:#4b5563;line-height:1.7;margin:0 0 12px;">${item.summary}</p>
+        ${item.keyPoints?.length ? `
+        <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.05em;">Key Points</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+          ${item.keyPoints.map(pt => `<tr><td style="font-size:13px;color:#4b5563;line-height:1.7;padding:2px 0 2px 12px;border-left:2px solid #e5e7eb;">&#8226; ${pt}</td></tr>`).join("")}
+        </table>` : ""}
+        ${item.fdeApplications?.length ? `
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;background:#eff6ff;border-radius:8px;border:1px solid #dbeafe;">
+          <tr><td style="padding:12px 16px;">
+            <p style="font-size:12px;font-weight:600;color:#1e40af;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.05em;">FDE Applications</p>
+            ${item.fdeApplications.map(app => `<p style="font-size:13px;color:#1e3a5f;line-height:1.7;margin:0 0 4px;">&#8226; ${app}</p>`).join("")}
+          </td></tr>
+        </table>` : ""}
+        ${item.links?.length ? `
+        <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.05em;">Learn More</p>
+        <p style="margin:0 0 12px;">${item.links.map(l => `<a href="${l.url}" style="font-size:12px;color:#2563eb;text-decoration:none;margin-right:12px;">${l.label} &#8599;</a>`).join("")}</p>` : ""}
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
             <td style="border-top:1px solid #f3f4f6;padding-top:10px;">
