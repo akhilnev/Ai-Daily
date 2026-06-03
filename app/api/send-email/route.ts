@@ -6,12 +6,13 @@ import { buildEmailHtml } from "@/lib/email-template";
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST() {
   try {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) throw new Error("RESEND_API_KEY env var not set");
     const recipientEmail = process.env.RECIPIENT_EMAIL;
     if (!recipientEmail) throw new Error("RECIPIENT_EMAIL env var not set");
+    const resend = new Resend(apiKey);
     const brief = await fetchBrief();
     const html = buildEmailHtml(brief);
     const { data, error } = await resend.emails.send({
